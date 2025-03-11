@@ -2,23 +2,6 @@
 
 This library enables reading WTC401SPI based touch panels chips.
 
-To get this working, you should connect your Arduino directly to the touch panel board using this pinout:
-
-The J1 connector pinout:
-
-```
- 1 -
- 2 -
- 3 - OUT_FLAG
- 4 - GND
- 5 -
- 6 - CS
- 7 - SCK
- 8 - SI (Slave Input)
- 9 - SO (Slave Output)
-10 - VCC
-```
-
 ## Example
 
 ```cpp
