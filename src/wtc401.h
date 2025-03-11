@@ -1,5 +1,5 @@
-#ifndef _WTC801_
-#define _WTC801_
+#ifndef _WTC401_
+#define _WTC401_
 
 #include <Arduino.h>
 #include <functional>
@@ -12,7 +12,7 @@ enum KeyEvent {
   Key3,
 };
 
-class WTC801 {
+class WTC401 {
   private:
     std::function<void(KeyEvent, uint8_t)> onKeyEvent;
     int8_t SCK, MOSI, MISO, CS;
@@ -31,7 +31,7 @@ class WTC801 {
     void resetButtons();
 
   public:
-    WTC801(int8_t SCK, int8_t MOSI, int8_t MISO, int8_t CS);
+    WTC401(int8_t SCK, int8_t MOSI, int8_t MISO, int8_t CS);
 
     void begin();
     void setOnEvent(std::function<void(KeyEvent, uint8_t)>);
