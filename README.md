@@ -2,6 +2,8 @@
 
 This library enables reading WTC401SPI based touch panels chips.
 
+Library still work in progress
+
 ## Example
 
 ```cpp
