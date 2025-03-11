@@ -1,4 +1,4 @@
-#include "wtc801.h"
+#include "wtc401.h"
 #include <SPI.h>
 
 // 8 ms interval. Datasheet specifies minimum 4ms between reads.
@@ -7,11 +7,12 @@
 #define SLIDER_MAX 53
 #define SLIDER_MIN 2
 
-#define KEY_RIGHT_CODE 0x00
-#define KEY_POWER_CODE 0x01
-#define KEY_LEFT_CODE  0x02
+#define KEY_0_CODE 0x00
+#define KEY_1_CODE 0x01
+#define KEY_2_CODE 0x02
+#define KEY_3_CODE 0x03
 
-WTC801::WTC801(int8_t SCK, int8_t MOSI, int8_t MISO, int8_t CS) {
+WTC401::WTC401(int8_t SCK, int8_t MOSI, int8_t MISO, int8_t CS) {
   this->SCK = SCK;
   this->CS = CS;
   this->MOSI = MOSI;
@@ -19,12 +20,13 @@ WTC801::WTC801(int8_t SCK, int8_t MOSI, int8_t MISO, int8_t CS) {
   this->onKeyEvent = NULL;
   this->lastRead = millis();
   this->lastSliderValue = 0;
-  this->lastKeyLeft = LOW;
-  this->lastKeyRight = LOW;
-  this->lastKeyPower = LOW;
+  this->lastKey0 = LOW;
+  this->lastKey1 = LOW;
+  this->lastKey2 = LOW;
+  this->lastKey3 = LOW;
 }
 
-uint8_t WTC801::read() {
+uint8_t WTC401::read() {
   digitalWrite(CS, LOW);
   uint8_t data = SPI.transfer(0xFF); // Always transfer full 1 bits
   digitalWrite(CS, HIGH);
@@ -32,7 +34,7 @@ uint8_t WTC801::read() {
   return data;
 }
 
-void WTC801::begin() {
+void WTC401::begin() {
   pinMode(SCK, OUTPUT);
   pinMode(CS, OUTPUT);
   pinMode(MOSI, OUTPUT);
@@ -45,29 +47,33 @@ void WTC801::begin() {
   lastRead = millis();
 }
 
-void WTC801::setOnEvent(std::function<void(KeyEvent, uint8_t)> onKeyEvent) {
+void WTC401::setOnEvent(std::function<void(KeyEvent, uint8_t)> onKeyEvent) {
   this->onKeyEvent = onKeyEvent;
 }
 
-void WTC801::resetButtons() {
-  uint8_t L = lastKeyLeft, P = lastKeyPower, R = lastKeyRight;
+void WTC401::resetButtons() {
+  uint8_t L = lastKey0, P = lastKey1, R = lastKey2, S = lastKey3;
 
-  lastKeyLeft = LOW;
-  lastKeyPower = LOW;
-  lastKeyRight = LOW;
+  lastKey0 = LOW;
+  lastKey1 = LOW;
+  lastKey2 = LOW;
+  lastKey3 = LOW;
 
   if (L && onKeyEvent != NULL) {
-    onKeyEvent(KeyLeft, LOW);
+    onKeyEvent(Key0, LOW);
   }
   if (P && onKeyEvent != NULL) {
-    onKeyEvent(KeyPower, LOW);
+    onKeyEvent(Key1, LOW);
   }
   if (R && onKeyEvent != NULL) {
-    onKeyEvent(KeyRight, LOW);
+    onKeyEvent(Key2, LOW);
+  }
+  if (S && onKeyEvent != NULL) {
+    onKeyEvent(Key3, LOW);
   }
 }
 
-void WTC801::process(uint8_t data) {
+void WTC401::process(uint8_t data) {
   uint8_t flag = data & 0x80;
   data &= 0x7F;
 
@@ -84,7 +90,7 @@ void WTC801::process(uint8_t data) {
   }
 }
 
-void WTC801::processSlider(uint8_t slider) {
+void WTC401::processSlider(uint8_t slider) {
   // Convert to percent
   uint16_t s = (uint16_t)slider - SLIDER_MIN;
   if (s > SLIDER_MAX) { // Negative
@@ -103,37 +109,45 @@ void WTC801::processSlider(uint8_t slider) {
   lastSliderValue = slider;
 }
 
-void WTC801::processButtons(uint8_t buttons) {
+void WTC401::processButtons(uint8_t buttons) {
   switch (buttons) {
-    case KEY_RIGHT_CODE:
-      if (!lastKeyRight) {
+    case KEY_0_CODE:
+      if (!lastKey0) {
         if (onKeyEvent != NULL) {
           onKeyEvent(KeyRight, HIGH);
         }
       }
-      lastKeyRight = HIGH;
+      lastKey0 = HIGH;
       break;
-    case KEY_POWER_CODE:
-      if (!lastKeyPower) {
+    case KEY_1_CODE:
+      if (!lastKey1) {
         if (onKeyEvent != NULL) {
           onKeyEvent(KeyPower, HIGH);
         }
       }
-      lastKeyPower = HIGH;
+      lastKey1 = HIGH;
       break;
-    case KEY_LEFT_CODE:
-      if (!lastKeyLeft) {
+    case KEY_2_CODE:
+      if (!lastKey2) {
         if (onKeyEvent != NULL) {
           onKeyEvent(KeyLeft, HIGH);
         }
       }
-      lastKeyLeft = HIGH;
+      lastKey2 = HIGH;
+      break;
+    case KEY_3_CODE:
+      if (!lastKey3) {
+        if (onKeyEvent != NULL) {
+          onKeyEvent(KeyLeft, HIGH);
+        }
+      }
+      lastKey3 = HIGH;
       break;
   }
 }
 
 
-void WTC801::loop() {
+void WTC401::loop() {
   if (millis() - lastRead > READ_PERIOD) {
     uint8_t data = read();
     process(data);
