@@ -1,6 +1,6 @@
-# WTC801
+# WTC401
 
-This library enables reading WTC801SPI based touch panels. It is based on this model:
+This library enables reading WTC401SPI based touch panels. It is based on this model:
 
 ![Dimmer TouchPanel](https://user-images.githubusercontent.com/578310/71561610-7021b500-2a57-11ea-97a3-9ccd80c3ba6e.png)
 
@@ -28,14 +28,14 @@ The J1 connector pinout:
 ## Example
 
 ```cpp
-#include "wtc801.h"
+#include "wtc401.h"
 
 #define SCK  D5
 #define MISO D6
 #define CS0  D8
 #define MOSI D7
 
-WTC801 panel(SCK, MOSI, MISO, CS0);
+WTC401 panel(SCK, MOSI, MISO, CS0);
 
 void onKeyEvent(KeyEvent event, uint8_t val) {
   switch (event) {
