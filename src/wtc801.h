@@ -6,9 +6,10 @@
 
 enum KeyEvent {
   Slider,
-  KeyLeft,
-  KeyRight,
-  KeyPower,
+  Key0,
+  Key1,
+  Key2,
+  Key3,
 };
 
 class WTC801 {
@@ -18,9 +19,10 @@ class WTC801 {
     long lastRead;
 
     uint8_t lastSliderValue;
-    uint8_t lastKeyLeft;
-    uint8_t lastKeyRight;
-    uint8_t lastKeyPower;
+    uint8_t lastKey0;
+    uint8_t lastKey1;
+    uint8_t lastKey2;
+    uint8_t lastKey3;
 
     uint8_t read();
     void process(uint8_t);
@@ -35,9 +37,10 @@ class WTC801 {
     void setOnEvent(std::function<void(KeyEvent, uint8_t)>);
     void loop();
 
-    inline uint8_t ReadKeyLeft()  { return lastKeyLeft;     }
-    inline uint8_t ReadKeyRight() { return lastKeyRight;    }
-    inline uint8_t ReadKeyPower() { return lastKeyPower;    }
+    inline uint8_t ReadKey0()     { return lastKey0;        }
+    inline uint8_t ReadKey1()     { return lastKey1;        }
+    inline uint8_t ReadKey2()     { return lastKey2;        }
+    inline uint8_t ReadKey3()     { return lastKey3;        }
     inline uint8_t ReadSlider()   { return lastSliderValue; }
 };
 
